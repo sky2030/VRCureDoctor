@@ -24,20 +24,19 @@ const CANCELED_COLOR = "#de0202";
 const IS_AVAILABLE = "available";
 const IS_BOOKED = "booked";
 const IS_CANCELED = "canceled";
-
+let startDateTime = moment().startOf("day").format("x");
+let endDateTime = moment().endOf("day").format("x");
 function DoctorSlot({ navigation, route }) {
   const [slotDate, setslotDate] = useState(moment().format("ll"));
-  // let startDate = 0;
-  // let endDate = 0;
-  let startDate = moment().startOf("day").format("x");
-  let endDate = moment().endOf("day").format("x");
+
+
   const [appointmentList, setAppointmentList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDatePickerAvailable, setDatePickerAvailable] = useState(false);
 
   const updateStartEndDate = async (sdate) => {
-    startDate = moment(sdate).startOf("day").format("x");
-    endDate = moment(sdate).endOf("day").format("x");
+    startDateTime = moment(sdate).startOf("day").format("x");
+    endDateTime = moment(sdate).endOf("day").format("x");
     setslotDate(moment(sdate).startOf("day").format("ll"));
   };
 
@@ -45,6 +44,7 @@ function DoctorSlot({ navigation, route }) {
     const unsubscribe = navigation.addListener("focus", async () => {
       updateStartEndDate(new Date());
       setAppointmentList([]);
+
       fetchData();
     });
     return unsubscribe;
@@ -56,19 +56,14 @@ function DoctorSlot({ navigation, route }) {
     fetchData();
   };
 
-  const displayBGSlot = (item) => {
-    if (item == IS_BOOKED) {
-      return BOOKED_COLOR;
-    } else if (item == IS_CANCELED) {
-      return CANCELED_COLOR;
-    }
-    return AVALABLE_COLOR;
-  };
+
 
   const fetchData = async () => {
+    setLoading(true)
     const userToken = await AsyncStorage.getItem("userToken");
-    let URL = `${BASE_URL}slots?day_from=${startDate}&day_to=${endDate}`;
-    console.log(URL);
+
+    let URL = `${BASE_URL}slots?day_from=${startDateTime}&day_to=${endDateTime}&status[]=available&status[]=booked`;
+    console.log(URL, userToken);
     fetch(URL, {
       method: "GET",
       headers: { Authorization: userToken },
@@ -76,11 +71,12 @@ function DoctorSlot({ navigation, route }) {
       .then((res) => res.json())
       .then((results) => {
         console.log(JSON.stringify(results));
+        setLoading(false);
         if (results.code != 200) {
           Alert.alert(Alert_Title, results.message);
         } else {
           setAppointmentList(results.data);
-          setLoading(false);
+
         }
       })
       .catch((err) => {
@@ -102,97 +98,199 @@ function DoctorSlot({ navigation, route }) {
     return returnValue;
   };
   const renderItem = (item, index) => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.95}
-        style={{
-          borderRadius: 4,
-          elevation: 3,
-          backgroundColor: displayBGSlot(item.status),
-          borderWidth: 1,
-          borderColor: "#1B5D9B",
-          marginHorizontal: 10,
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottomWidth: 3,
-          flex: 1,
-          marginTop: 10,
-          flexDirection: "row",
-        }}
-        onPress={() => navigation.navigate("ManageConsultation", { item })}
-      >
-        <View style={styles.PatientText}>
-          <Text style={styles.timetext}>{item.status.toUpperCase()}</Text>
-        </View>
 
-        <View style={styles.PatientText}>
-          <Text style={styles.timetext}>
-            {moment(item.day_millis).format("ll")}
-          </Text>
+    let patientName = "Not Booked"
+    if (item.consultant && item.consultant.name && item.consultant.name.length > 0 && item.status == "booked") {
+      patientName = item.consultant.name
+      if (item.consultant.gender) {
+        patientName = patientName + " (" + item.consultant.gender + ")"
+      }
+    }
+    return (
+      <TouchableOpacity style={styles.card1}
+        activeOpacity={0.8}
+        onPress={() => deleteSlotPressed(item)}
+      >
+
+        <View style={{ flex: 1, alignItems: "center", marginVertical: 7 }}>
+          <Text style={{ color: "#4E557C", fontWeight: "900", fontSize: 16 }}>Appointment</Text>
+          <Text style={{ color: "#4E557C", marginTop: 5, fontWeight: "900", fontSize: 15 }}>
+            {moment(item.day_millis).format("LT")}</Text>
         </View>
-        <View style={styles.buttonheader}>
-          <Text style={styles.timetext}>
-            {StringFromTime(item.time_millis)}
-          </Text>
+        <View style={{ flex: 1, alignItems: "center", marginVertical: 7, }}>
+          <Text style={{ color: "#4E557C", fontWeight: "900", fontSize: 16 }}>Patient</Text>
+          <Text style={{ color: "#4E557C", marginTop: 5, fontWeight: "900", fontSize: 15 }}>{patientName} </Text>
         </View>
       </TouchableOpacity>
+
+
+    )
+  }
+  const deleteAll = async () => {
+    const userToken = await AsyncStorage.getItem("userToken");
+
+    let URL = `${BASE_URL}appointment/cancelled`;
+    let payLoad = {
+      from_millis: startDateTime,
+      to_millis: endDateTime,
+    }
+
+
+    fetch(URL, {
+      method: "PUT",
+      headers: {
+        Authorization: userToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payLoad),
+    })
+      .then((res) => res.json())
+      .then((results) => {
+        console.log(results);
+        if (results.code != 200) {
+          Alert.alert(Alert_Title, results.message);
+        } else {
+          navigation.goBack()
+        }
+      })
+      .catch((err) => {
+        Alert.alert(Alert_Title, SOMETHING_WENT_WRONG);
+      });
+
+  }
+  const deleteAppointment = async (item) => {
+    const userToken = await AsyncStorage.getItem("userToken");
+
+    let URL = `${BASE_URL}appointment/cancelled`;
+    let payLoad = {
+      appointment_id: item.id,
+    }
+
+    fetch(URL, {
+      method: "PUT",
+      headers: {
+        Authorization: userToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payLoad),
+    })
+      .then((res) => res.json())
+      .then((results) => {
+        console.log(results);
+        Alert.alert(Alert_Title, results.message);
+        if (results.code == 200) {
+          fetchData()
+        }
+      })
+      .catch((err) => {
+        Alert.alert(Alert_Title, SOMETHING_WENT_WRONG);
+      });
+
+  }
+  const deleteSlotPressed = (item) => {
+    Alert.alert(
+      Alert_Title,
+      `Would you like to cancel ${moment(item.day_millis).format("LT")} appointment slot?`,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => { deleteAppointment(item) } },
+      ]
     );
+  }
+  const deleteAllSlotPressed = () => {
+    Alert.alert(
+      Alert_Title,
+      `Would you like to cancel all your appointment's slot?`,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => deleteAll() },
+      ]
+    );
+  }
+  const renderFooter = () => {
+    if (appointmentList.length > 1) {
+      return (
+        //Footer View with Load More button
+        <View style={{ width: screenWidth / 2.3, alignSelf: "center", marginTop: 10 }}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => deleteAllSlotPressed()}
+            //On Click of button load more data
+            style={{
+              flex: 1, backgroundColor: "#FF0000", paddingVertical: 8,
+              borderRadius: 5, elevation: 2, justifyContent: "center", alignItems: "center"
+            }}>
+            <Text style={{ color: "#fff", fontWeight: "900", fontSize: 17 }}>Cancel All</Text>
+
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    else {
+      return <View />
+    }
   };
+
+
+
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#d02860" barStyle="light-content" />
       <View style={styles.head}>
-        <MaterialIcons
-          name="navigate-before"
-          size={30}
-          onPress={() => navigation.goBack()}
-          style={styles.back}
-        />
-        <Text style={styles.titletext}>Doctor Slots</Text>
+        <View style={{
+          flexDirection: "row", alignItems: "center", flex: 1
+
+        }}>
+          <MaterialIcons
+            name="navigate-before"
+            size={24}
+            onPress={() => navigation.goBack()}
+            style={styles.back}
+          />
+          <Text style={styles.titletext}>Doctor Slots</Text>
+        </View>
+        <View style={{
+          flexDirection: "row", alignItems: "center", flex: 1,
+          justifyContent: "flex-end"
+
+        }}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              color: "#08211c",
+              margin: 10, flexDirection: "row", alignItems: "center"
+            }}
+            onPress={() => setDatePickerAvailable(true)}
+          >
+            <Text style={styles.toptext}>
+              {slotDate}
+            </Text>
+
+
+            <AntDesign name="calendar" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={styles.Subtitle}>
-        <Text style={styles.toptext}>
-          Your Consultation Slots on {slotDate}
-        </Text>
-        <TouchableOpacity
-          style={{
-            color: "#08211c",
-            margin: 10,
-          }}
-          onPress={() => setDatePickerAvailable(true)}
-        >
-          <AntDesign name="calendar" size={32} color="black" />
-        </TouchableOpacity>
-      </View>
 
-      {/* <TouchableOpacity
-        activeOpacity={0.95}
-        style={styles.AppointmentCard}
-        onPress={() => navigation.navigate("ManageConsultation")}
-      >
-        <View style={styles.PatientText}>
-          <Text style={styles.timetext}>
-            {moment(item.day_millis).format("ll")}
-            {moment(1601110212281).format("ll")}
-          </Text>
-        </View>
-        <View style={styles.buttonheader}>
-          <Text style={styles.timetext}>
-            {StringFromTime(item.time_millis)}
-            {StringFromTime(1601110289997)}
-          </Text>
-        </View>
-      </TouchableOpacity> */}
 
       <FlatList
-        style={{ marginBottom: 20 }}
+        style={{ marginBottom: 50 }}
         data={appointmentList}
         renderItem={({ item, index }) => renderItem(item, index)}
         keyExtractor={(item, index) => item.id}
         onRefresh={() => fetchData()}
         refreshing={loading}
+        ListFooterComponent={renderFooter}
       />
 
       <DateTimePickerModal
@@ -209,7 +307,7 @@ function DoctorSlot({ navigation, route }) {
       >
         <Text style={styles.bottomtext}>Privacy Policy | Terms of use</Text>
       </TouchableOpacity>
-    </View>
+    </View >
   );
 }
 
@@ -235,14 +333,13 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
+    height: 50
   },
   titletext: {
     color: "#4E557C",
-    fontSize: 25,
-    fontWeight: "bold",
-    paddingHorizontal: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    fontSize: 20,
+    fontWeight: "900",
+    marginLeft: 50,
   },
 
   footer: {
@@ -264,18 +361,18 @@ const styles = StyleSheet.create({
   Cardheadtext: {
     color: "white",
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   btntext: {
     color: "black",
     fontSize: 20,
     marginLeft: 5,
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   Patientbodytext: {
     color: "darkred",
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
     marginBottom: 2,
     marginTop: 4,
     marginLeft: 15,
@@ -283,7 +380,7 @@ const styles = StyleSheet.create({
   Patienthead: {
     color: "black",
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "900",
     marginBottom: 2,
     marginTop: 4,
     marginLeft: 15,
@@ -293,7 +390,7 @@ const styles = StyleSheet.create({
     color: "white",
     backgroundColor: "#3B565B",
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
@@ -320,15 +417,13 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     flexDirection: "row",
-    marginLeft: 15,
+
   },
   toptext: {
-    //marginBottom: 15,
-    marginTop: 15,
-    alignContent: "center",
-    justifyContent: "center",
-    fontSize: 18,
-    fontWeight: "bold",
+
+    marginRight: 10,
+    fontSize: 16,
+    fontWeight: "900",
   },
 
   Cardbody: {
@@ -409,4 +504,19 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 5,
   },
+  card1: {
+    borderRadius: 4,
+    elevation: 2,
+    backgroundColor: "white",
+    shadowColor: "#55DE61",
+    shadowRadius: 2,
+    marginHorizontal: 10,
+    alignSelf: "center",
+    marginTop: 5,
+    width: screenWidth - 20,
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+
+
 });

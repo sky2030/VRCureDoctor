@@ -78,7 +78,7 @@ const ProfileUpdate = ({ navigation, route }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // updateDOB(new Date());
-      setFirstName(route.params.data.first_name);
+      setFirstName(route.params.data.name);
       setLastName(route.params.data.last_name);
       setMobile(route.params.data.mobile);
       setEmail(route.params.data.email);

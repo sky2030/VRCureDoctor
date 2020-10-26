@@ -4,19 +4,15 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
-  ScrollView,
   FlatList,
   Dimensions,
-  Alert,
+  Alert
 } from "react-native";
 import moment from "moment-timezone";
 import AsyncStorage from "@react-native-community/async-storage";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-
+import { Picker } from "@react-native-community/picker"
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 function DoctorAppointment({ navigation, route }) {
@@ -26,10 +22,14 @@ function DoctorAppointment({ navigation, route }) {
   const [isDatePickerAvailable, setDatePickerAvailable] = useState(false);
   const [appointmentList, setAppointmentList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [slotValue, setSlotValue] = useState("booked");
+  const [allSlots, setAllSlots] = useState([]);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
+      setAllSlots([])
       updateStartEndDate(new Date());
       setAppointmentList([]);
+      setSlotValue("booked")
       fetchData();
     });
     return unsubscribe;
@@ -47,7 +47,8 @@ function DoctorAppointment({ navigation, route }) {
   };
   const fetchData = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
-    let URL = `${BASE_URL}slots?day_from=${startDate}&day_to=${endDate}&status[]=booked`;
+    // let URL = `${BASE_URL}slots?day_from=${startDate}&day_to=${endDate}&status[]=booked`;
+    let URL = `${BASE_URL}slots?day_from=${startDate}&day_to=${endDate}`;
     console.log(URL);
     fetch(URL, {
       method: "GET",
@@ -55,12 +56,17 @@ function DoctorAppointment({ navigation, route }) {
     })
       .then((res) => res.json())
       .then((results) => {
-        console.log(JSON.stringify(results));
         setLoading(false);
+        console.log("Data of appointment :", JSON.stringify(results.data[0].hospital))
         if (results.code != 200) {
           Alert.alert(Alert_Title, results.message);
         } else {
-          setAppointmentList(results.data);
+          setAllSlots(results.data)
+          let list = results.data.filter(item => {
+            if (item.status == slotValue)
+              return item
+          })
+          setAppointmentList(list);
         }
       })
       .catch((err) => {
@@ -73,7 +79,7 @@ function DoctorAppointment({ navigation, route }) {
     ///v1/patient/appointment/join-now
     const userToken = await AsyncStorage.getItem("userToken");
 
-    let URL = `https://api.mconnecthealth.com/v1/doctor/appointment/join-now?appointment_id=${item.id}`;
+    let URL = `${BASE_URL}appointment/join-now?appointment_id=${item.id}`;
 
     console.log(URL);
     fetch(URL, {
@@ -114,11 +120,15 @@ function DoctorAppointment({ navigation, route }) {
     return returnValue;
   };
   const renderItem = (item, index) => {
-    const joinConversationStatus = statusForJoinConversation(item);
+    let joinConversationStatus = statusForJoinConversation(item);
+
+    if (item.status != "booked") {
+      joinConversationStatus = -1
+    }
     return (
       <View style={styles.AppointmentCard}>
         <View style={styles.header}>
-          <Text style={styles.whitebold}>{item.patient.name}</Text>
+          <Text style={styles.whitebold}>{item.consultant.name}</Text>
         </View>
         <View style={styles.Cardbody}>
           <View style={styles.bodysection}>
@@ -177,6 +187,7 @@ function DoctorAppointment({ navigation, route }) {
       </View>
     );
   };
+
   return (
     <View
       style={{
@@ -186,32 +197,71 @@ function DoctorAppointment({ navigation, route }) {
         alignSelf: "center",
       }}
     >
-      <View style={styles.Subtitle}>
-        <Text style={styles.toptext}>Booked Slots for {slotDate}</Text>
-        <TouchableOpacity
-          style={{
-            color: "#08211c",
-            marginLeft: 10,
-          }}
-          onPress={() => setDatePickerAvailable(true)}
-        >
-          <AntDesign name="calendar" size={32} color="black" />
-        </TouchableOpacity>
-      </View>
-      <DateTimePickerModal
-        isVisible={isDatePickerAvailable}
-        mode="date"
-        onConfirm={handleDatePicker}
-        onCancel={() => setDatePickerAvailable(false)}
-      />
-      <FlatList
-        style={{ marginBottom: 30 }}
-        data={appointmentList}
-        renderItem={({ item, index }) => renderItem(item, index)}
-        keyExtractor={(item, index) => item.id}
-        onRefresh={() => fetchData()}
-        refreshing={loading}
-      />
+      {
+
+        <View style={{
+          flexDirection: "row", alignSelf: "center", marginBottom: 20
+
+
+        }}>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              height: 50, width: 150,
+              justifyContent: "center"
+            }}
+            onPress={() => setDatePickerAvailable(true)}
+          >
+            <Text style={styles.toptext} >{`${slotDate}  `}
+              <AntDesign name="calendar" size={20} color="black" />
+            </Text>
+
+          </TouchableOpacity>
+          <Picker
+            selectedValue={slotValue}
+            style={{
+              height: 50, width: 150, marginLeft: 20,
+              color: "black"
+            }}
+            onValueChange={(itemValue, itemIndex) => {
+
+              setSlotValue(itemValue)
+              let list = allSlots.filter(item => {
+                if (item.status == itemValue)
+                  return item
+              })
+              setAppointmentList(list);
+            }}
+
+          >
+            <Picker.Item label="Upcoming" value="booked" />
+            <Picker.Item label="Completed" value="completed" />
+          </Picker>
+
+
+          <DateTimePickerModal
+            isVisible={isDatePickerAvailable}
+            mode="date"
+            onConfirm={handleDatePicker}
+            onCancel={() => setDatePickerAvailable(false)}
+          />
+
+        </View>
+      }
+      {
+        appointmentList.length > 0 && <FlatList
+          style={{ marginBottom: 30 }}
+          data={appointmentList}
+          renderItem={({ item, index }) => renderItem(item, index)}
+          keyExtractor={(item, index) => item.id}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
+        />
+      }
+      {
+        appointmentList.length == 0 && <Text style={{ alignSelf: "center", fontSize: 16 }}> No Appointment </Text>
+      }
 
       <TouchableOpacity
         activeOpacity={0.95}
@@ -231,16 +281,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  Subtitle: {
-    alignContent: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    marginBottom: 10,
-  },
+
   toptext: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 5,
+    fontSize: 17,
+    color: "black"
+    // fontWeight: "bold",
+    // marginTop: 5,
   },
 
   footer: {
@@ -353,5 +399,25 @@ const styles = StyleSheet.create({
     marginTop: 5,
     height: 45,
     marginBottom: 5,
+  },
+});
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+    color: "black",
+    fontWeight: "900",
+    // width: 90,
+    // backgroundColor: "#fff",
+  },
+  inputAndroid: {
+    fontSize: 16,
+    fontWeight: "900",
+    paddingVertical: 3,
+    color: "black",
+    paddingHorizontal: 5,
+    // backgroundColor: "#fff",
+    // width: 70,
   },
 });

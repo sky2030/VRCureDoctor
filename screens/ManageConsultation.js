@@ -5,7 +5,7 @@ import {
   View,
   Alert,
   ScrollView,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { Dropdown } from "react-native-material-dropdown-v2";

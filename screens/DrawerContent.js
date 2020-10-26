@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 
 import profile from "../assets/Images/Avatar-icon.png";
 import { Avatar, Title, Caption, Paragraph, Drawer } from "react-native-paper";
@@ -21,7 +21,7 @@ export function DrawerContent(props) {
   const GetProfile = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
     //  console.log(userToken)
-    await fetch(BASE_URL, {
+    fetch(BASE_URL, {
       method: "GET",
       headers: { Authorization: userToken },
     })

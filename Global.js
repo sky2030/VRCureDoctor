@@ -1,7 +1,7 @@
 //===============Network=====================//
 
-global.BASE = "http://624f82b85b75.ngrok.io";
-//global.BASE = "https://stage.mconnecthealth.com"
+//global.BASE = "http://5e95e4ad370d.ngrok.io";
+global.BASE = "https://stage.mconnecthealth.com";
 
 global.BASE_PATH = `${BASE}/v1/doctor`;
 global.BASE_URL = `${BASE_PATH}/`;

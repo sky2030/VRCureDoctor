@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
   Modal,
+  KeyboardAvoidingView,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Button } from "react-native-paper";
@@ -21,6 +22,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
 let NA = "N/A";
 export default function PatientHistory({ navigation, route }) {
+  const [enableshift, setenableShift] = useState(false);
   const [advice, setdoctorAdvice] = useState("");
   const [special_advice, setSpecial] = useState(NA);
   const [symptoms, setSymptoms] = useState(NA);
@@ -32,11 +34,18 @@ export default function PatientHistory({ navigation, route }) {
   const [patientAge, setPatientAge] = useState(NA);
   const [patientHeight, setPatientheight] = useState(NA);
   const [patientGender, setPatientGender] = useState(NA);
+  const [Hospital_Name, setHospitalName] = useState("");
+  const [Doctor_Name, setDoctorName] = useState("");
+  const [Ddesignation, setDesignation] = useState("");
+  const [Ddegree, setDegree] = useState("");
+  const [H_Place, setHPlace] = useState("");
+  const [H_city, setHCity] = useState("");
+  const [H_pin, setHPin] = useState("");
   const [suggestedInvestigation, setSuggestedInvestigation] = useState(NA);
   const [modal, setModal] = useState(false);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-      console.log("Appointment :", JSON.stringify(route.params.item));
+      console.log("Appointment :", JSON.stringify(route.params.item.consultant.height));
       setAppointment(route.params.item);
       setdoctorAdvice("");
       setSpecial(NA);
@@ -44,31 +53,41 @@ export default function PatientHistory({ navigation, route }) {
       setFindings(NA);
       setFilestring("");
       setSuggestedInvestigation(NA);
-
+      setHospitalName(route.params.item.hospital.name)
+      setDoctorName(route.params.item.doctor.name)
+      setDesignation(route.params.item.doctor.designation)
+      setDegree(route.params.item.doctor.degree)
+      setHPlace(route.params.item.hospital.place)
+      setHCity(route.params.item.hospital.city)
+      setHPin(route.params.item.hospital.pincode)
       setPatientName(
-        route.params.item.patient ? route.params.item.patient.name : ""
+        route.params.item.consultant ? route.params.item.consultant.name : ""
       );
       setPatientWeight(
-        route.params.item.weight != undefined
-          ? route.params.item.patient.weight
-          : NA
+        route.params.item.consultant.weight + " Kg"
+        // route.params.item.consultant.weight != undefined
+        //   ? route.params.item.consultant.weight
+        //   : NA
       );
       setPatientAge(
-        route.params.item.age != undefined ? route.params.item.patient.age : NA
+        route.params.item.consultant.age
+        // route.params.item.age != undefined ? route.params.item.consultant.age : NA
       );
       setPatientheight(
-        route.params.item.height != undefined
-          ? route.params.item.patient.height
-          : NA
+        route.params.item.consultant.height + " cm"
+        // route.params.item.consultant.height != undefined
+        //   ? route.params.item.consultant.height
+        //   : NA
       );
       setPatientGender(
-        route.params.item.gender != undefined
-          ? route.params.item.patient.gender
-          : "MALE"
+        route.params.item.consultant.gender
+        // route.params.item.consultant.gender != undefined
+        //   ? route.params.item.consultant.gender
+        //   : "MALE"
       );
     });
     return unsubscribe;
-  }, [route.params]);
+  }, [route.params.item]);
 
   // const selectPhototapped = () => {
   //   const options = {
@@ -141,7 +160,7 @@ export default function PatientHistory({ navigation, route }) {
   const uploadPrescription = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
 
-    let URL = `https://api.mconnecthealth.com/v1/doctor/prescription`;
+    let URL = `${BASE_URL}prescription`;
 
     if (patientName.length <= 0) {
       Alert.alert(Alert_Title, "Please fill the patient name");
@@ -251,242 +270,253 @@ export default function PatientHistory({ navigation, route }) {
       </View>
 
       <ScrollView>
-        <View style={styles.presCard}>
-          <View style={styles.header}>
-            <Text style={styles.Titlehead}>Moolchand Hospital </Text>
-            <Text style={styles.headtext}> Dr. Rakesh Sharma </Text>
-            <Text style={styles.headtext}>Lajpat Nagar, New Delhi </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignSelf: "center",
-              marginTop: 10,
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Text style={{ color: "black", fontWeight: "900", fontSize: 18 }}>
-              Patient Name :{" "}
-            </Text>
-            <TextInput
-              placeholder="Patient Name"
-              value={patientName}
-              placeholderTextColor="#666666"
-              style={{ color: "black", fontSize: 18, fontWeight: "900" }}
-              onChangeText={(val) => setPatientName(val)}
-            />
-          </View>
-          <View style={styles.Patientinfo}>
-            <View>
-              <View
-                style={{
-                  marginLeft: 10,
-                  flexDirection: "row",
-                  flex: 1,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "black",
-                    fontWeight: "900",
-                    fontSize: 16,
-                    width: 70,
-                  }}
-                >
-                  Gender
-                </Text>
-                <Text
-                  style={{ color: "black", fontWeight: "900", fontSize: 16 }}
-                >
-                  :{" "}
-                </Text>
-                <RNPickerSelect
-                  placeholder={{}}
-                  items={genderItem}
-                  onValueChange={(value) => {
-                    setPatientGender(value);
-                  }}
-                  style={pickerSelectStyles}
-                  value={patientGender}
-                  useNativeAndroidPickerStyle={false}
-                />
-              </View>
-              <View
-                style={{
-                  marginLeft: 10,
-                  flexDirection: "row",
-                  flex: 1,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "black",
-                    fontWeight: "900",
-                    fontSize: 16,
-                    width: 70,
-                  }}
-                >
-                  Age
-                </Text>
-                <Text
-                  style={{ color: "black", fontWeight: "900", fontSize: 16 }}
-                >
-                  :{" "}
-                </Text>
-                <RNPickerSelect
-                  placeholder={{}}
-                  items={ageItem()}
-                  onValueChange={(value) => {
-                    setPatientAge(value);
-                  }}
-                  style={pickerSelectStyles}
-                  value={patientAge}
-                  useNativeAndroidPickerStyle={false}
-                />
-              </View>
+        <KeyboardAvoidingView
+          behavior="position"
+          enabled={enableshift}
+        >
+          <View style={styles.presCard}>
+            <View style={styles.header}>
+              <Text style={styles.Titlehead}>{Hospital_Name} </Text>
+              <Text style={styles.headtext}> Dr. {Doctor_Name} | {Ddegree} </Text>
+              <Text style={styles.headtext}>{Ddesignation} </Text>
+              <Text style={styles.headtext}>{H_Place}, {H_city} {H_pin}</Text>
             </View>
-            <View style={{ marginLeft: 10 }}>
-              <View
-                style={{
-                  marginLeft: 20,
-                  flexDirection: "row",
-                  flex: 1,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "black",
-                    fontWeight: "900",
-                    fontSize: 16,
-                    width: 70,
-                  }}
-                >
-                  Weight
-                </Text>
-                <Text
-                  style={{ color: "black", fontWeight: "900", fontSize: 16 }}
-                >
-                  :{" "}
-                </Text>
-                <RNPickerSelect
-                  placeholder={{}}
-                  items={weightItem()}
-                  onValueChange={(value) => {
-                    setPatientWeight(value);
-                  }}
-                  style={pickerSelectStyles}
-                  value={patientWeight}
-                  useNativeAndroidPickerStyle={false}
-                />
-              </View>
-              <View
-                style={{
-                  marginLeft: 20,
-                  flexDirection: "row",
-                  flex: 1,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "black",
-                    fontWeight: "900",
-                    fontSize: 16,
-                    width: 70,
-                  }}
-                >
-                  Height
-                </Text>
-                <Text
-                  style={{ color: "black", fontWeight: "900", fontSize: 16 }}
-                >
-                  :{" "}
-                </Text>
-                <RNPickerSelect
-                  placeholder={{}}
-                  items={heightItem()}
-                  onValueChange={(value) => {
-                    setPatientheight(value);
-                  }}
-                  style={pickerSelectStyles}
-                  value={patientHeight}
-                  useNativeAndroidPickerStyle={false}
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.presbody}>
-            <View style={styles.presbodyLeft}>
-              <Title style={styles.lefttext}> Chief Complaints </Title>
-              <TextInput
-                placeholder="Symptoms"
-                //placeholderTextColor="#666666"
-                style={styles.Input}
-                multiline={true}
-                value={symptoms != NA ? symptoms : ""}
-                onChangeText={(val) => setSymptoms(val)}
-              />
-
-              <Title style={styles.lefttext}> Lab Findings </Title>
-              <TextInput
-                placeholder="Findings"
-                //placeholderTextColor="#666666"
-                style={styles.Input}
-                multiline={true}
-                value={findings != NA ? findings : ""}
-                onChangeText={(val) => setFindings(val)}
-              />
-
-              <Title style={styles.lefttext}> Suggested Investigation </Title>
-              <TextInput
-                placeholder="Suggested Investigation"
-                //placeholderTextColor="#666666"
-                style={styles.Input}
-                multiline={true}
-                value={
-                  suggestedInvestigation != NA ? suggestedInvestigation : ""
-                }
-                onChangeText={(val) => setSuggestedInvestigation(val)}
-              />
-            </View>
-            <View style={styles.presbodyRight}>
-              <TextInput
-                placeholder="Doctor's Prescription body"
-                // placeholderTextColor="#666666"
-                style={styles.textInput}
-                multiline={true}
-                value={advice != NA ? advice : ""}
-                onChangeText={(val) => setdoctorAdvice(val)}
-              />
-            </View>
-          </View>
-          <View style={styles.Specialbody}>
-            <Text style={styles.infotext}>Special Instructions:</Text>
-            <TextInput
-              placeholder="Special Instruction's"
-              //placeholderTextColor="#666666"
-              style={styles.specialInput}
-              multiline={true}
-              value={special_advice != NA ? special_advice : ""}
-              onChangeText={(val) => setSpecial(val)}
-            />
-
-            <View style={{ flexDirection: "row", marginTop: 5 }}>
-              <Text style={styles.date}>Appointment Date</Text>
-              <Text>{moment(appointment.day_millis).format("ll")}</Text>
-              <Text style={{ marginLeft: 20, fontWeight: "900" }}>
-                Signature
+            <View
+              style={{
+                flexDirection: "row",
+                alignSelf: "center",
+                marginTop: 10,
+                alignItems: "center",
+                marginBottom: 5,
+              }}
+            >
+              <Text style={{ color: "black", fontWeight: "900", fontSize: 18 }}>
+                Patient Name :{" "}
               </Text>
+              <TextInput
+                placeholder="Patient Name"
+                value={patientName}
+                placeholderTextColor="#666666"
+                style={{ color: "black", fontSize: 18, fontWeight: "900" }}
+                onChangeText={(val) => setPatientName(val)}
+              />
+            </View>
+            <View style={styles.Patientinfo}>
+              <View>
+                <View
+                  style={{
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    flex: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "black",
+                      fontWeight: "900",
+                      fontSize: 16,
+                      width: 70,
+                    }}
+                  >
+                    Gender
+                </Text>
+                  <Text style={{ color: "black", fontWeight: "900", fontSize: 16 }}>
+
+                    : {" "}
+
+                  </Text>
+                  <RNPickerSelect
+                    placeholder={{}}
+                    items={genderItem}
+                    onValueChange={(value) => {
+                      setPatientGender(value);
+                    }}
+                    style={pickerSelectStyles}
+                    value={patientGender}
+                    useNativeAndroidPickerStyle={false}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    flex: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "black",
+                      fontWeight: "900",
+                      fontSize: 16,
+                      width: 70,
+                    }}
+                  >
+                    Age
+                </Text>
+                  <Text
+                    style={{ color: "black", fontWeight: "900", fontSize: 16 }}
+                  >
+                    : {" "}
+                  </Text>
+                  <RNPickerSelect
+                    placeholder={{}}
+                    items={ageItem()}
+                    onValueChange={(value) => {
+                      setPatientAge(value);
+                    }}
+                    style={pickerSelectStyles}
+                    value={patientAge}
+                    useNativeAndroidPickerStyle={false}
+                  />
+
+                </View>
+              </View>
+              <View style={{ marginLeft: 10 }}>
+                <View
+                  style={{
+                    marginLeft: 20,
+                    flexDirection: "row",
+                    flex: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "black",
+                      fontWeight: "900",
+                      fontSize: 16,
+                      width: 70,
+                    }}
+                  >
+                    Weight
+                </Text>
+                  <Text
+                    style={{ color: "black", fontWeight: "900", fontSize: 16 }}
+                  >
+                    : {" "}
+                  </Text>
+                  <RNPickerSelect
+                    placeholder={{}}
+                    items={weightItem()}
+                    onValueChange={(value) => {
+                      setPatientWeight(value);
+                    }}
+                    style={pickerSelectStyles}
+                    value={patientWeight}
+                    useNativeAndroidPickerStyle={false}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginLeft: 20,
+                    flexDirection: "row",
+                    flex: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "black",
+                      fontWeight: "900",
+                      fontSize: 16,
+                      width: 70,
+                    }}
+                  >
+                    Height
+                </Text>
+                  <Text
+                    style={{ color: "black", fontWeight: "900", fontSize: 16 }}
+                  >
+                    : {" "}
+                  </Text>
+                  <RNPickerSelect
+                    placeholder={{}}
+                    items={heightItem()}
+                    onValueChange={(value) => {
+                      setPatientheight(value);
+                    }}
+                    style={pickerSelectStyles}
+                    value={patientHeight}
+                    useNativeAndroidPickerStyle={false}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.presbody}>
+              <View style={styles.presbodyLeft}>
+                <Title style={styles.lefttext}> Chief Complaints </Title>
+                <TextInput
+                  placeholder="Symptoms"
+                  //placeholderTextColor="#666666"
+                  style={styles.Input}
+                  onFocus={() => setenableShift(false)}
+                  multiline={true}
+                  value={symptoms != NA ? symptoms : ""}
+                  onChangeText={(val) => setSymptoms(val)}
+                />
+
+                <Title style={styles.lefttext}> Lab Findings </Title>
+                <TextInput
+                  placeholder="Findings"
+                  //placeholderTextColor="#666666"
+                  onFocus={() => setenableShift(true)}
+                  style={styles.Input}
+                  multiline={true}
+                  value={findings != NA ? findings : ""}
+                  onChangeText={(val) => setFindings(val)}
+                />
+
+                <Title style={styles.lefttext}> Suggested Investigation </Title>
+                <TextInput
+                  placeholder="Suggested Investigation"
+                  //placeholderTextColor="#666666"
+                  onFocus={() => setenableShift(true)}
+                  style={styles.Input}
+                  multiline={true}
+                  value={
+                    suggestedInvestigation != NA ? suggestedInvestigation : ""
+                  }
+                  onChangeText={(val) => setSuggestedInvestigation(val)}
+                />
+              </View>
+              <View style={styles.presbodyRight}>
+                <TextInput
+                  placeholder="Doctor's Prescription body"
+                  // placeholderTextColor="#666666"
+                  onFocus={() => setenableShift(false)}
+                  style={styles.textInput}
+                  multiline={true}
+                  value={advice != NA ? advice : ""}
+                  onChangeText={(val) => setdoctorAdvice(val)}
+                />
+              </View>
+            </View>
+            <View style={styles.Specialbody}>
+              <Text style={styles.infotext}>Special Instructions:</Text>
+              <TextInput
+                placeholder="Special Instruction's"
+                //placeholderTextColor="#666666"
+                onFocus={() => setenableShift(true)}
+                style={styles.specialInput}
+                multiline={true}
+                value={special_advice != NA ? special_advice : ""}
+                onChangeText={(val) => setSpecial(val)}
+              />
+
+              <View style={{ flexDirection: "row", marginTop: 5 }}>
+                <Text style={styles.date}>Appointment Date</Text>
+                <Text>{moment(appointment.day_millis).format("ll")}</Text>
+                <Text style={{ marginLeft: 20, fontWeight: "900" }}>
+                  Signature
+              </Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        {/* <View>
+          {/* <View>
           {
             fileString.length > 0 && <Image
               source={{ uri: fileString }}
@@ -494,38 +524,39 @@ export default function PatientHistory({ navigation, route }) {
             />
           }
         </View> */}
-        <TouchableOpacity
-          activeOpacity={0.95}
-          onPress={() => selectPhototapped()}
-          style={{ margin: 10, flex: 1, marginBottom: 50 }}
-        >
-          {fileString.length > 0 && (
-            <View>
-              <Image
-                source={{ uri: fileString }}
-                style={{ flex: 1, aspectRatio: 0.4, marginBottom: 10 }}
-              />
-            </View>
-          )}
-          {fileString.length > 0 && (
-            <TouchableOpacity
-              onPress={() => {
-                setFilestring("");
-              }}
-            >
-              <Text style={styles.redbold}>Remove Attachment</Text>
-            </TouchableOpacity>
-          )}
-          {fileString.length == 0 && (
-            <TouchableOpacity
-              onPress={() => {
-                setModal(true);
-              }}
-            >
-              <Text style={styles.whitebold}>Attachment</Text>
-            </TouchableOpacity>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.95}
+            onPress={() => selectPhototapped()}
+            style={{ margin: 10, flex: 1, marginBottom: 50 }}
+          >
+            {fileString.length > 0 && (
+              <View>
+                <Image
+                  source={{ uri: fileString }}
+                  style={{ flex: 1, aspectRatio: 0.4, marginBottom: 10 }}
+                />
+              </View>
+            )}
+            {fileString.length > 0 && (
+              <TouchableOpacity
+                onPress={() => {
+                  setFilestring("");
+                }}
+              >
+                <Text style={styles.redbold}>Remove Attachment</Text>
+              </TouchableOpacity>
+            )}
+            {fileString.length == 0 && (
+              <TouchableOpacity
+                onPress={() => {
+                  setModal(true);
+                }}
+              >
+                <Text style={styles.whitebold}>Attachment</Text>
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
       </ScrollView>
       <TouchableOpacity
         activeOpacity={0.95}
@@ -630,13 +661,13 @@ const styles = StyleSheet.create({
   },
   presbody: {
     flex: 1,
+    marginTop: 5,
     flexDirection: "row",
     borderTopColor: "black",
     borderTopWidth: 2,
   },
   presbodyLeft: {
     flex: 1,
-    height: "100%",
     padding: 10,
     borderRightColor: "black",
     borderRightWidth: 2,
@@ -647,10 +678,8 @@ const styles = StyleSheet.create({
   },
   presbodyRight: {
     flex: 2,
-    height: "100%",
-
     padding: 10,
-    height: 400,
+    height: 280
   },
   textInput: {
     flex: 1,
@@ -696,7 +725,7 @@ const styles = StyleSheet.create({
 
   Titlehead: {
     color: "white",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "900",
   },
   headtext: {
@@ -788,7 +817,7 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 3,
     color: "black",
     backgroundColor: "#fff",
-    // width: 70,
+    //width: 30,
   },
 });
 
@@ -802,8 +831,8 @@ const ageItem = () => {
   let index = 1;
   while (index <= 125) {
     list.push({
-      label: `${index}`,
-      value: `${index}`,
+      label: `${index} years`,
+      value: `${index} years`,
     });
     index++;
   }
@@ -819,8 +848,8 @@ const weightItem = () => {
   let index = 1;
   while (index <= 200) {
     list.push({
-      label: `${index}  Kg`,
-      value: `${index}  Kg`,
+      label: `${index} Kg`,
+      value: `${index} Kg`,
     });
     index++;
   }
@@ -836,14 +865,18 @@ const heightItem = () => {
   let index = 30;
   while (index <= 225) {
     list.push({
-      label: `${index}  cm`,
-      value: `${index}  cm`,
+      label: `${index} cm`,
+      value: `${index} cm`,
     });
     index++;
   }
   return list;
 };
 const genderItem = [
+  // {
+  //   label: NA,
+  //   value: NA,
+  // },
   {
     label: "Male",
     value: "Male",

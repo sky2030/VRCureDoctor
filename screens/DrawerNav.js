@@ -13,9 +13,10 @@ import EnxConferenceScreen from "./EnxConferenceScreen";
 import ManageConsultation from "./ManageConsultation";
 import ProfileUpdate from "./ProfileUpdate";
 import ReportRepo from "./Reports";
+
 const Drawer = createDrawerNavigator();
 
-const DrawerStackScreen = ({}) => (
+const DrawerStackScreen = ({ }) => (
   <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
     <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
     <Drawer.Screen name="Contactus" component={SupportScreen} />

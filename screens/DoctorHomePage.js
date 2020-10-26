@@ -32,7 +32,7 @@ function DoctorHomePage({ navigation }) {
             <FontAwesome5 name="book-medical" size={40} color="#d02860" />
           </View>
           <View style={{ flex: 3 }}>
-            <Text style={styles.Cardtext}>Upcoming Appointment</Text>
+            <Text style={styles.Cardtext}> Appointments </Text>
           </View>
         </TouchableOpacity>
 
@@ -68,7 +68,7 @@ function DoctorHomePage({ navigation }) {
           </View>
 
           <View style={{ flex: 3 }}>
-            <Text style={styles.Cardtext}>Doctor Slot's</Text>
+            <Text style={styles.Cardtext}>Manage Appointment</Text>
           </View>
         </TouchableOpacity>
       </View>

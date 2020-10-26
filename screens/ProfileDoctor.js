@@ -33,6 +33,7 @@ function ProfileDoctor({ navigation }) {
     })
       .then((res) => res.json())
       .then((results) => {
+        console.log(results)
         if (results.code == 200) {
           Setdata(results.data);
           setLoading(false);
@@ -59,7 +60,7 @@ function ProfileDoctor({ navigation }) {
         <View style={styles.HeadCard}>
           <Image source={{ uri: data.picture }} style={styles.img} />
 
-          <Text style={styles.headtext1}>Welcome Dr. {data.first_name} </Text>
+          <Text style={styles.headtext1}>Welcome Dr. {data.name} </Text>
           <View style={styles.row1}>
             <FontAwesome5
               name="registered"

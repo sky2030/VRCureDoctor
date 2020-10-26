@@ -26,13 +26,8 @@ export default function ReportRepo({ navigation, route }) {
 
   const fetchData = async (appointmentid) => {
     const userToken = await AsyncStorage.getItem("userToken");
-    let URL = ""
-    if (appointmentid) {
-      URL = `${BASE_URL}report/${appointmentid}`;
-    }
-    else {
-      URL = `${BASE_URL}reports`;
-    }
+    let URL = `${BASE_URL}report/${appointmentid}`
+
     console.log(URL);
     fetch(URL, {
       method: "GET",
@@ -72,12 +67,7 @@ export default function ReportRepo({ navigation, route }) {
     });
     return unsubscribe;
   }, [route.params]);
-  const removeReport = (item) => {
 
-  }
-  const replaceReport = (item) => {
-
-  }
   const renderItem = (item, index) => {
     let fileString = ""
     if (item.file) {
@@ -120,23 +110,6 @@ export default function ReportRepo({ navigation, route }) {
 
           }
         </View>
-        {
-
-          fileString.length > 0 &&
-          <View style={{ width: "95%", flexDirection: "row", justifyContent: "center", marginTop: 20 }}>
-            <TouchableOpacity
-              onPress={() => removeReport()}
-            >
-              <Text style={styles.whitebold}>Remove Report</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ marginLeft: 20 }}
-              onPress={() => replaceReport()}
-            >
-              <Text style={styles.whitebold}>Replace Report</Text>
-            </TouchableOpacity>
-          </View>
-        }
 
       </ScrollView>
     );
