@@ -35,9 +35,9 @@ export default function PrivacyPolicy({ navigation }) {
             </View>
             <View style={styles.title9}>
               <Text style={styles.bodytext}>
-                These Website Standard Terms and Conditions written on this
-                webpage shall manage your use of our website, Webiste Name
-                accessible at Website.com.
+                These Application Standard Terms and Conditions written on this
+                webpage shall manage your use of our website, Application Name
+                accessible at doctors.mconnecthealth.com.
               </Text>
               {/* <Text style={styles.bodytext}>
                         meeting 3-5 minutes before it starts.
@@ -59,9 +59,9 @@ export default function PrivacyPolicy({ navigation }) {
             <View style={styles.title9}>
               <Text style={styles.bodytext}>
                 These Terms will be applied fully and affect to your use of this
-                Website. By using this Website, you agreed to accept all terms
-                and conditions written in here. You must not use this Website if
-                you disagree with any of these Website Standard Terms and
+                Application. By using this Application, you agreed to accept all terms
+                and conditions written in here. You must not use this Application if
+                you disagree with any of these Application Standard Terms and
                 Conditions.
               </Text>
               {/* <Text style={styles.bodytext}>
@@ -87,7 +87,7 @@ export default function PrivacyPolicy({ navigation }) {
             <View style={styles.title9}>
               <Text style={styles.bodytext}>
                 Minors or people below 18 years old are not allowed to use this
-                Website.
+                Application.
               </Text>
               {/* <Text style={styles.bodytext}>
                          virtual meeting. 
@@ -112,11 +112,11 @@ export default function PrivacyPolicy({ navigation }) {
               <Text style={styles.bodytext}>
                 Other than the content you own, under these Terms, Company Name
                 and/or its licensors own all the intellectual property rights
-                and materials contained in this Website.
+                and materials contained in this Application.
               </Text>
               <Text style={styles.bodytext}>
                 You are granted limited license only for purposes of viewing the
-                material contained on this Website.
+                material contained on this Application.
               </Text>
               {/* <Text style={styles.bodytext}>
                         When you want to speak, 
@@ -143,21 +143,21 @@ export default function PrivacyPolicy({ navigation }) {
                 You are specifically restricted from all of the following:
               </Text>
               <Text style={styles.bodytext}>
-                publishing any Website material in any other media; selling,
-                sublicensing and/or otherwise commercializing any Website
-                material; publicly performing and/or showing any Website
-                material; using this Website in any way that is or may be
-                damaging to this Website; using this Website in any way that
-                impacts user access to this Website; using this Website contrary
+                publishing any Application material in any other media; selling,
+                sublicensing and/or otherwise commercializing any Application
+                material; publicly performing and/or showing any Application
+                material; using this Application in any way that is or may be
+                damaging to this Application; using this Application in any way that
+                impacts user access to this Application; using this Application contrary
                 to applicable laws and regulations, or in any way may cause harm
-                to the Website, or to any person or business entity; engaging in
+                to the Application, or to any person or business entity; engaging in
                 any data mining, data harvesting, data extracting or any other
-                similar activity in relation to this Website; using this Website
+                similar activity in relation to this Application; using this Application
                 to engage in any advertising or marketing. Certain areas of this
-                Website are restricted from being access by you and Company Name
-                may further restrict access by you to any areas of this Website,
+                Application are restricted from being access by you and Company Name
+                may further restrict access by you to any areas of this Application,
                 at any time, in absolute discretion. Any user ID and password
-                you may have for this Website are confidential and you must
+                you may have for this Application are confidential and you must
                 maintain confidentiality as well.
               </Text>
               {/* <Text style={styles.bodytext}>
@@ -211,7 +211,7 @@ export default function PrivacyPolicy({ navigation }) {
             <View style={styles.title9}>
               <Text style={styles.bodytext}>
                 These Terms constitute the entire agreement between Company Name
-                and you in relation to your use of this Website, and supersede
+                and you in relation to your use of this Application, and supersede
                 all prior agreements and understandings.
               </Text>
               {/* <Text style={styles.bodytext}>

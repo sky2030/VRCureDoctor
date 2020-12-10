@@ -23,7 +23,7 @@ const SplashScreen = ({ navigation }) => {
           duraton="1500"
           source={SplashLogo}
           style={styles.logo}
-          //  resizeMode="stretch"
+        //  resizeMode="stretch"
         />
       </View>
       <Animatable.View style={styles.footer} animation="fadeInUpBig">

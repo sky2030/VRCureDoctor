@@ -1,3 +1,8 @@
+
+/**
+ * Add Prescription 
+ * @ Mixlab - Anoop
+ */
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -290,14 +295,14 @@ export default function PatientHistory({ navigation, route }) {
                 marginBottom: 5,
               }}
             >
-              <Text style={{ color: "black", fontWeight: "900", fontSize: 18 }}>
+              <Text style={{ color: "black", fontWeight: "500", fontSize: 18 }}>
                 Patient Name :{" "}
               </Text>
               <TextInput
                 placeholder="Patient Name"
                 value={patientName}
                 placeholderTextColor="#666666"
-                style={{ color: "black", fontSize: 18, fontWeight: "900" }}
+                style={{ color: "black", fontSize: 18, fontWeight: "500" }}
                 onChangeText={(val) => setPatientName(val)}
               />
             </View>
@@ -314,14 +319,14 @@ export default function PatientHistory({ navigation, route }) {
                   <Text
                     style={{
                       color: "black",
-                      fontWeight: "900",
+                      fontWeight: "500",
                       fontSize: 16,
                       width: 70,
                     }}
                   >
                     Gender
                 </Text>
-                  <Text style={{ color: "black", fontWeight: "900", fontSize: 16 }}>
+                  <Text style={{ color: "black", fontWeight: "500", fontSize: 16 }}>
 
                     : {" "}
 
@@ -348,7 +353,7 @@ export default function PatientHistory({ navigation, route }) {
                   <Text
                     style={{
                       color: "black",
-                      fontWeight: "900",
+                      fontWeight: "500",
                       fontSize: 16,
                       width: 70,
                     }}
@@ -356,7 +361,7 @@ export default function PatientHistory({ navigation, route }) {
                     Age
                 </Text>
                   <Text
-                    style={{ color: "black", fontWeight: "900", fontSize: 16 }}
+                    style={{ color: "black", fontWeight: "500", fontSize: 16 }}
                   >
                     : {" "}
                   </Text>
@@ -385,7 +390,7 @@ export default function PatientHistory({ navigation, route }) {
                   <Text
                     style={{
                       color: "black",
-                      fontWeight: "900",
+                      fontWeight: "500",
                       fontSize: 16,
                       width: 70,
                     }}
@@ -393,7 +398,7 @@ export default function PatientHistory({ navigation, route }) {
                     Weight
                 </Text>
                   <Text
-                    style={{ color: "black", fontWeight: "900", fontSize: 16 }}
+                    style={{ color: "black", fontWeight: "500", fontSize: 16 }}
                   >
                     : {" "}
                   </Text>
@@ -419,7 +424,7 @@ export default function PatientHistory({ navigation, route }) {
                   <Text
                     style={{
                       color: "black",
-                      fontWeight: "900",
+                      fontWeight: "500",
                       fontSize: 16,
                       width: 70,
                     }}
@@ -427,7 +432,7 @@ export default function PatientHistory({ navigation, route }) {
                     Height
                 </Text>
                   <Text
-                    style={{ color: "black", fontWeight: "900", fontSize: 16 }}
+                    style={{ color: "black", fontWeight: "500", fontSize: 16 }}
                   >
                     : {" "}
                   </Text>
@@ -509,7 +514,7 @@ export default function PatientHistory({ navigation, route }) {
               <View style={{ flexDirection: "row", marginTop: 5 }}>
                 <Text style={styles.date}>Appointment Date</Text>
                 <Text>{moment(appointment.day_millis).format("ll")}</Text>
-                <Text style={{ marginLeft: 20, fontWeight: "900" }}>
+                <Text style={{ marginLeft: 20, fontWeight: "500" }}>
                   Signature
               </Text>
               </View>
@@ -674,7 +679,7 @@ const styles = StyleSheet.create({
   },
   lefttext: {
     fontSize: 13,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   presbodyRight: {
     flex: 2,
@@ -704,7 +709,7 @@ const styles = StyleSheet.create({
   date: {
     color: "#000",
     fontSize: 14,
-    fontWeight: "900",
+    fontWeight: "500",
     marginHorizontal: 5,
   },
 
@@ -726,12 +731,12 @@ const styles = StyleSheet.create({
   Titlehead: {
     color: "white",
     fontSize: 20,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   headtext: {
     color: "white",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "500",
   },
 
   header: {
@@ -763,7 +768,7 @@ const styles = StyleSheet.create({
   infotext: {
     color: "black",
     fontSize: 18,
-    fontWeight: "900",
+    fontWeight: "500",
     paddingVertical: 5,
   },
   whitebold: {
@@ -791,7 +796,7 @@ const styles = StyleSheet.create({
     padding: 5,
     color: "#fff",
     fontSize: 22,
-    fontWeight: "900",
+    fontWeight: "500",
     flexDirection: "row",
     borderRadius: 5,
     height: 25,
@@ -807,13 +812,13 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 5,
     color: "black",
-    fontWeight: "900",
+    fontWeight: "500",
     // width: 90,
     backgroundColor: "#fff",
   },
   inputAndroid: {
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "500",
     paddingVertical: 3,
     color: "black",
     backgroundColor: "#fff",

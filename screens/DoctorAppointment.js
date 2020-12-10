@@ -1,3 +1,11 @@
+
+/**
+ * List of appointments 
+ * Filter appointment based on there status and date
+ * @ Mixlab - Anoop
+ */
+
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -6,13 +14,15 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert, Platform, SafeAreaView
 } from "react-native";
 import moment from "moment-timezone";
 import AsyncStorage from "@react-native-community/async-storage";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AntDesign } from "@expo/vector-icons";
-import { Picker } from "@react-native-community/picker"
+import RNPickerSelect from 'react-native-picker-select';
+import { Chevron } from 'react-native-shapes';
+
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 function DoctorAppointment({ navigation, route }) {
@@ -57,7 +67,7 @@ function DoctorAppointment({ navigation, route }) {
       .then((res) => res.json())
       .then((results) => {
         setLoading(false);
-        console.log("Data of appointment :", JSON.stringify(results.data[0].hospital))
+        // console.log("Data of appointment :", JSON.stringify(results.data[0].hospital))
         if (results.code != 200) {
           Alert.alert(Alert_Title, results.message);
         } else {
@@ -176,20 +186,40 @@ function DoctorAppointment({ navigation, route }) {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity
+          {
+            item.status != "completed" && <TouchableOpacity
+              activeOpacity={0.95}
+              onPress={() => {
+                if (item.status == "completed") {
+                  navigation.navigate("PrescriptionHistory", { appointment_id: item.id })
+                }
+                else {
+                  navigation.navigate("prescription", { item })
+                }
+              }
+              }
+              style={styles.cardbtn}
+            >
+              <Text style={styles.whitebold}>Prescription</Text>
+            </TouchableOpacity>
+          }
+        </View>
+        {
+          item.status != "completed" && <TouchableOpacity
             activeOpacity={0.95}
-            onPress={() => navigation.navigate("prescription", { item })}
+            onPress={() => navigation.navigate("ConsentRaise", { appointment_id: item.id })
+            }
             style={styles.cardbtn}
           >
-            <Text style={styles.whitebold}>Prescription</Text>
+            <Text style={styles.whitebold}>Raise Consent For Report</Text>
           </TouchableOpacity>
-        </View>
+        }
       </View>
     );
   };
 
   return (
-    <View
+    <SafeAreaView
       style={{
         width: screenWidth - 20,
         flex: 1,
@@ -218,14 +248,27 @@ function DoctorAppointment({ navigation, route }) {
             </Text>
 
           </TouchableOpacity>
-          <Picker
-            selectedValue={slotValue}
+          <RNPickerSelect
             style={{
-              height: 50, width: 150, marginLeft: 20,
-              color: "black"
+              inputAndroid: {
+                fontSize: 16,
+                paddingHorizontal: 10,
+                color: 'black',
+                paddingRight: 30, //
+              },
+              inputIOS: {
+                fontSize: 16,
+                paddingHorizontal: 10,
+                color: 'black',
+                paddingRight: 30, //
+              },
+              iconContainer: {
+                paddingVertical: 20,
+              },
             }}
-            onValueChange={(itemValue, itemIndex) => {
-
+            placeholder={{}}
+            useNativeAndroidPickerStyle={false}
+            onValueChange={(itemValue) => {
               setSlotValue(itemValue)
               let list = allSlots.filter(item => {
                 if (item.status == itemValue)
@@ -233,12 +276,14 @@ function DoctorAppointment({ navigation, route }) {
               })
               setAppointmentList(list);
             }}
-
-          >
-            <Picker.Item label="Upcoming" value="booked" />
-            <Picker.Item label="Completed" value="completed" />
-          </Picker>
-
+            Icon={() => {
+              return <Chevron size={1.5} color="gray" />;
+            }}
+            items={[
+              { label: 'Upcoming', value: 'booked' },
+              { label: 'Completed', value: 'completed' },
+            ]}
+          />
 
           <DateTimePickerModal
             isVisible={isDatePickerAvailable}
@@ -250,18 +295,17 @@ function DoctorAppointment({ navigation, route }) {
         </View>
       }
       {
-        appointmentList.length > 0 && <FlatList
+        <FlatList
           style={{ marginBottom: 30 }}
           data={appointmentList}
           renderItem={({ item, index }) => renderItem(item, index)}
           keyExtractor={(item, index) => item.id}
           onRefresh={() => fetchData()}
           refreshing={loading}
+          ListEmptyComponent={<NoDataView text={loading == true ? "" : NO_DATA_FOUND} />}
         />
       }
-      {
-        appointmentList.length == 0 && <Text style={{ alignSelf: "center", fontSize: 16 }}> No Appointment </Text>
-      }
+
 
       <TouchableOpacity
         activeOpacity={0.95}
@@ -270,7 +314,7 @@ function DoctorAppointment({ navigation, route }) {
       >
         <Text style={styles.bottomtext}>Privacy Policy | Terms of use</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -399,25 +443,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
     height: 45,
     marginBottom: 5,
-  },
-});
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 3,
-    paddingHorizontal: 5,
-    color: "black",
-    fontWeight: "900",
-    // width: 90,
-    // backgroundColor: "#fff",
-  },
-  inputAndroid: {
-    fontSize: 16,
-    fontWeight: "900",
-    paddingVertical: 3,
-    color: "black",
-    paddingHorizontal: 5,
-    // backgroundColor: "#fff",
-    // width: 70,
   },
 });

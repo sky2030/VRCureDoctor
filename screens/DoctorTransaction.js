@@ -1,3 +1,8 @@
+/**
+ * List of transactions
+ * @ Mixlab - Anoop
+ */
+
 import React, { useState, useEffect } from "react";
 import {
     StyleSheet,
@@ -7,7 +12,7 @@ import {
     Image,
     ImageBackground,
     StatusBar,
-    Alert, FlatList, Dimensions
+    Alert, FlatList, Dimensions, SafeAreaView
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -105,11 +110,11 @@ export default function Transaction({ navigation, route }) {
                 <View style={styles.title4}>
 
                     <View style={styles.title8}>
-                        <Text style={styles.headtext2}>Doctor</Text>
-                        <Text style={styles.headtext2}>Dr. {item.doctor_name}</Text>
+                        <Text>Patient Name</Text>
+                        <Text style={styles.headtext2}>{item.patient_name}</Text>
                     </View>
                     <View style={styles.title6}>
-                        <Text style={styles.headtext2}>Amount</Text>
+                        <Text>Amount</Text>
                         <Text style={styles.headtext2}>{item.amount} {item.currency} </Text>
                     </View>
                 </View>
@@ -141,7 +146,7 @@ export default function Transaction({ navigation, route }) {
 
 
 
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
             <FlatList
                 data={item}
@@ -160,7 +165,7 @@ export default function Transaction({ navigation, route }) {
                 }}
                 keyExtractor={(item) => item.invoice}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -228,7 +233,7 @@ const styles = StyleSheet.create({
     headtext2: {
         color: "#4E557C",
         marginTop: 5,
-        fontWeight: "900",
+        fontWeight: "600",
     },
     InvoiceNo: {
         color: PRIMARY_COLOR,

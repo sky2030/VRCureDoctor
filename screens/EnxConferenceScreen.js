@@ -1,3 +1,8 @@
+
+/**
+ * EnableX Video Chat 
+ * @ Mixlab - Anoop
+ */
 import React, { PureComponent } from "react";
 import {
   StyleSheet,

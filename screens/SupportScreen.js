@@ -9,73 +9,17 @@ export default function SupportScreen({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
-  const fetchData = async () => {
-    const userToken = await AsyncStorage.getItem("userToken");
-    // console.log(userToken)
-    fetch(`${BASE_URL}hospitals`, {
-      method: "GET",
-      headers: { Authorization: userToken },
-    })
-      .then((res) => res.json())
-      .then((results) => {
-        console.log(JSON.stringify(results));
-        setLoading(false);
-        if (results.code == 200) {
-          setData(results.data);
-        } else {
-          Alert.alert(Alert_Title, results.message);
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        Alert.alert(Alert_Title, SOMETHING_WENT_WRONG);
-      });
-  };
+
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      fetchData();
+
     });
 
     return unsubscribe;
-  }, [route.params]);
+  }, []);
 
 
-  const renderList = (item) => {
-    return (
-
-      <View style={styles.contactCard}>
-        <View style={styles.header}>
-          <Text style={styles.headtext1}>{item.hospitalname}</Text>
-        </View>
-        <View style={styles.body}>
-          <View style={styles.title8}>
-            <Text style={styles.headtext2}>Phone Number</Text>
-            <Text style={styles.headtext2}>{item.phone}</Text>
-          </View>
-          <View style={styles.title8}>
-            <Text style={styles.headtext2}>Email Address</Text>
-            <Text style={styles.headtext2}>{item.email}</Text>
-          </View>
-        </View>
-        <View style={styles.emergencybody}>
-          <View style={styles.title8}>
-            <Text style={styles.headtext2}>Emergency No</Text>
-            <Text style={styles.headtext2}>{item.emergencyNo}</Text>
-          </View>
-          <View style={styles.title8}>
-            <Text style={styles.headtext2}>Emergency Email</Text>
-            <Text style={styles.headtext2}>{item.emergencyDetail}</Text>
-          </View>
-        </View>
-
-
-
-      </View>
-
-
-    );
-  };
   return (
     <View style={styles.container}>
       <View style={styles.head}>
@@ -86,26 +30,7 @@ export default function SupportScreen({ navigation, route }) {
           style={styles.back}
         />
         <Text style={styles.titletext}>Contact us </Text>
-        <MaterialCommunityIcons
-          name="home-plus"
-          size={30}
-          color="white"
-          onPress={() => navigation.navigate("Hospital")}
-          style={{ position: "absolute", right: 10 }}
-        />
       </View>
-
-      <FlatList
-        style={{ marginTop: 10 }}
-        data={data}
-        renderItem={({ item }) => {
-          return renderList(item);
-        }}
-        keyExtractor={(item) => item._id}
-        onRefresh={() => fetchData()}
-        refreshing={loading}
-      />
-
 
 
       <View style={styles.SupportCard}>
@@ -134,7 +59,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   head: {
-    backgroundColor: "#21ada2",
     flexDirection: "row",
     height: 50,
     width: "100%",
@@ -143,13 +67,13 @@ const styles = StyleSheet.create({
   },
   back: {
     padding: 10,
-    color: "white",
+    color: "#d02860",
   },
 
   titletext: {
-    color: "white",
+    color: "#d02860",
     fontSize: 21,
-    fontWeight: "500",
+    fontWeight: "900",
     textAlign: "center",
     width: "80%",
   },
@@ -197,7 +121,7 @@ const styles = StyleSheet.create({
   },
   header: {
     color: "white",
-    backgroundColor: "#192161",
+    backgroundColor: "#d02860",
     fontSize: 15,
     fontWeight: "bold",
     alignItems: "center",

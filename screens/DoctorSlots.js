@@ -1,3 +1,8 @@
+/**
+ * Manage Appointment
+ * @ Mixlab - Anoop
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -8,7 +13,7 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
-  Alert,
+  Alert, SafeAreaView
 } from "react-native";
 
 import AsyncStorage from "@react-native-community/async-storage";
@@ -113,13 +118,13 @@ function DoctorSlot({ navigation, route }) {
       >
 
         <View style={{ flex: 1, alignItems: "center", marginVertical: 7 }}>
-          <Text style={{ color: "#4E557C", fontWeight: "900", fontSize: 16 }}>Appointment</Text>
-          <Text style={{ color: "#4E557C", marginTop: 5, fontWeight: "900", fontSize: 15 }}>
+          <Text style={{ color: "#4E557C", fontWeight: "500", fontSize: 16 }}>Appointment</Text>
+          <Text style={{ color: "#4E557C", marginTop: 5, fontWeight: "500", fontSize: 15 }}>
             {moment(item.day_millis).format("LT")}</Text>
         </View>
         <View style={{ flex: 1, alignItems: "center", marginVertical: 7, }}>
-          <Text style={{ color: "#4E557C", fontWeight: "900", fontSize: 16 }}>Patient</Text>
-          <Text style={{ color: "#4E557C", marginTop: 5, fontWeight: "900", fontSize: 15 }}>{patientName} </Text>
+          <Text style={{ color: "#4E557C", fontWeight: "500", fontSize: 16 }}>Patient</Text>
+          <Text style={{ color: "#4E557C", marginTop: 5, fontWeight: "500", fontSize: 15 }}>{patientName} </Text>
         </View>
       </TouchableOpacity>
 
@@ -228,7 +233,7 @@ function DoctorSlot({ navigation, route }) {
               flex: 1, backgroundColor: "#FF0000", paddingVertical: 8,
               borderRadius: 5, elevation: 2, justifyContent: "center", alignItems: "center"
             }}>
-            <Text style={{ color: "#fff", fontWeight: "900", fontSize: 17 }}>Cancel All</Text>
+            <Text style={{ color: "#fff", fontWeight: "500", fontSize: 17 }}>Cancel All</Text>
 
           </TouchableOpacity>
         </View>
@@ -243,7 +248,7 @@ function DoctorSlot({ navigation, route }) {
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#d02860" barStyle="light-content" />
       <View style={styles.head}>
         <View style={{
@@ -291,6 +296,7 @@ function DoctorSlot({ navigation, route }) {
         onRefresh={() => fetchData()}
         refreshing={loading}
         ListFooterComponent={renderFooter}
+        ListEmptyComponent={<NoDataView text={loading == true ? "" : NO_DATA_FOUND} />}
       />
 
       <DateTimePickerModal
@@ -307,7 +313,7 @@ function DoctorSlot({ navigation, route }) {
       >
         <Text style={styles.bottomtext}>Privacy Policy | Terms of use</Text>
       </TouchableOpacity>
-    </View >
+    </SafeAreaView>
   );
 }
 
@@ -338,7 +344,7 @@ const styles = StyleSheet.create({
   titletext: {
     color: "#4E557C",
     fontSize: 20,
-    fontWeight: "900",
+    fontWeight: "500",
     marginLeft: 50,
   },
 
@@ -361,18 +367,18 @@ const styles = StyleSheet.create({
   Cardheadtext: {
     color: "white",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   btntext: {
     color: "black",
     fontSize: 20,
     marginLeft: 5,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   Patientbodytext: {
     color: "darkred",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "500",
     marginBottom: 2,
     marginTop: 4,
     marginLeft: 15,
@@ -380,7 +386,7 @@ const styles = StyleSheet.create({
   Patienthead: {
     color: "black",
     fontSize: 18,
-    fontWeight: "900",
+    fontWeight: "500",
     marginBottom: 2,
     marginTop: 4,
     marginLeft: 15,
@@ -390,7 +396,7 @@ const styles = StyleSheet.create({
     color: "white",
     backgroundColor: "#3B565B",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "500",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
@@ -423,7 +429,7 @@ const styles = StyleSheet.create({
 
     marginRight: 10,
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "500",
   },
 
   Cardbody: {

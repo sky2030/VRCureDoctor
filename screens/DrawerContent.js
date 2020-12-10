@@ -55,7 +55,7 @@ export function DrawerContent(props) {
               <Avatar.Image source={{ uri: data.picture }} size={55} />
               <View style={{ marginLeft: 15, flexDirection: "column" }}>
                 <Title style={styles.title}>
-                  Dr. {data.first_name} {data.last_name}
+                  Dr. {data.name}
                 </Title>
                 <Caption style={styles.caption}>{data.registration_no}</Caption>
               </View>

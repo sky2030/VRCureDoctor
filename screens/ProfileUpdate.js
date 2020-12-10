@@ -38,7 +38,7 @@ const ProfileUpdate = ({ navigation, route }) => {
 
   const submitData = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
-    fetch(`${BASE_URL}${route.params.data._id}`, {
+    fetch(`${BASE_URL}${route.params.data.id}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +59,8 @@ const ProfileUpdate = ({ navigation, route }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        Alert.alert(`${first_name} is saved successfully`);
+        console.log("data msg :", data.message)
+        Alert.alert(Alert_Title, data.message);
         navigation.goBack();
       })
       .catch((err) => {
@@ -78,7 +79,7 @@ const ProfileUpdate = ({ navigation, route }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // updateDOB(new Date());
-      setFirstName(route.params.data.name);
+      setFirstName(route.params.data.first_name);
       setLastName(route.params.data.last_name);
       setMobile(route.params.data.mobile);
       setEmail(route.params.data.email);

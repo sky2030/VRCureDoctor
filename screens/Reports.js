@@ -1,3 +1,7 @@
+/**
+ * View Report
+ * @ Mixlab - Anoop
+ */
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
@@ -5,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  ScrollView, FlatList, Alert, Dimensions
+  ScrollView, FlatList, Alert, Dimensions, SafeAreaView
 } from "react-native";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -124,7 +128,7 @@ export default function ReportRepo({ navigation, route }) {
     setcurrentPage(pageNum);
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.head}>
 
         <Text style={styles.titletext}>My Reports</Text>
@@ -164,6 +168,7 @@ export default function ReportRepo({ navigation, route }) {
           onRefresh={() => { }}
           refreshing={loading}
           style={{ marginBottom: 30, }}
+          ListEmptyComponent={<NoDataView text={loading == true ? "" : NO_DATA_FOUND} />}
         />
       }
       {
@@ -188,7 +193,7 @@ export default function ReportRepo({ navigation, route }) {
       >
         <AntDesign name="addfile" size={30} color="black" />
       </TouchableOpacity> */}
-    </View>
+    </SafeAreaView>
   );
 }
 const theme = {

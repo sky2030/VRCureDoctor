@@ -13,6 +13,8 @@ import EnxConferenceScreen from "./EnxConferenceScreen";
 import ManageConsultation from "./ManageConsultation";
 import ProfileUpdate from "./ProfileUpdate";
 import ReportRepo from "./Reports";
+import PrescriptionHistory from "./PrescriptionHistory";
+import ConsentRequest from './ConsentRequest'
 
 const Drawer = createDrawerNavigator();
 
@@ -27,6 +29,9 @@ const DrawerStackScreen = ({ }) => (
     <Drawer.Screen name="ManageConsultation" component={ManageConsultation} />
     <Drawer.Screen name="updateprofile" component={ProfileUpdate} />
     <Drawer.Screen name="ReportRepo" component={ReportRepo} />
+    <Drawer.Screen name="PrescriptionHistory" component={PrescriptionHistory} />
+    <Drawer.Screen name="ConsentRaise" component={ConsentRequest} />
+
   </Drawer.Navigator>
 );
 

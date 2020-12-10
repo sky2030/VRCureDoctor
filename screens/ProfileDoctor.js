@@ -33,7 +33,6 @@ function ProfileDoctor({ navigation }) {
     })
       .then((res) => res.json())
       .then((results) => {
-        console.log(results)
         if (results.code == 200) {
           Setdata(results.data);
           setLoading(false);
@@ -82,7 +81,7 @@ function ProfileDoctor({ navigation }) {
               <Fontisto name="doctor" size={24} color="#d02860" />
               <View style={styles.informationtext}>
                 <Text style={styles.fetcheddata}>
-                  Dr. {data.first_name} {data.last_name}
+                  Dr. {data.name}
                 </Text>
               </View>
             </View>
@@ -169,6 +168,7 @@ function ProfileDoctor({ navigation }) {
                 <Text style={styles.fetcheddata}>{data.email}</Text>
               </View>
             </View>
+
             <View style={styles.detailrows}>
               <View style={styles.bodytitle}>
                 <Text style={styles.titlebody}>Designation</Text>
@@ -183,17 +183,21 @@ function ProfileDoctor({ navigation }) {
                 <Text style={styles.fetcheddata}>{data.designation}</Text>
               </View>
             </View>
+            <TouchableOpacity
+              style={{ paddingVertical: 10 }}
+              activeOpacity={0.95}
+              onPress={() => navigation.navigate("updateprofile", { data })}
+            >
+              <Text style={styles.bottomtext}>Update Profile</Text>
+            </TouchableOpacity>
+
           </View>
         </Animatable.View>
+
+
       </ScrollView>
 
-      <TouchableOpacity
-        activeOpacity={0.95}
-        onPress={() => navigation.navigate("updateprofile", { data })}
-        style={styles.footer}
-      >
-        <Text style={styles.bottomtext}>Update Profile</Text>
-      </TouchableOpacity>
+
     </View>
   );
 }
@@ -243,9 +247,9 @@ const styles = StyleSheet.create({
     color: "#e01d5e",
     fontSize: 16,
     backgroundColor: "#eee",
-    fontWeight: "900",
+    fontWeight: "500",
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
     borderRadius: 5,
   },
   row1: {
@@ -257,14 +261,14 @@ const styles = StyleSheet.create({
   registration: {
     color: "#d02860",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "500",
     flex: 2,
     marginLeft: 10,
   },
   expstyle: {
     color: "#d02860",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "500",
     flex: 1,
     marginRight: 10,
   },
@@ -272,7 +276,7 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 10,
     fontSize: 30,
-    fontWeight: "900",
+    fontWeight: "500",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -280,7 +284,7 @@ const styles = StyleSheet.create({
     color: "#d02860",
     marginBottom: 10,
     fontSize: 22,
-    fontWeight: "900",
+    fontWeight: "500",
     justifyContent: "flex-start",
     alignItems: "flex-start",
     marginEnd: 15,
@@ -291,7 +295,7 @@ const styles = StyleSheet.create({
     color: "#d02860",
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   informationtext: {
     marginLeft: 10,
@@ -315,7 +319,7 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "500",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -407,7 +411,7 @@ const styles = StyleSheet.create({
     color: "#d02860",
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "500",
     justifyContent: "center",
     alignItems: "center",
   },
